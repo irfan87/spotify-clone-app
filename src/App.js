@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import SpotifyWebApi from "spotify-web-api-js";
+
+import "./App.css";
+import Login from "./components/Login/Login";
+import Player from "./components/Player/Player";
+import { getTokenFromUrl } from "./spotify";
+
+// is a Spotify constructor - which is a class from the Spotify itself
+const spotify = new SpotifyWebApi();
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [token, setToken] = useState(null);
+
+	useEffect(() => {
+		const hash = getTokenFromUrl();
+
+		// apply this to hide the access token from the url
+		window.location.hash = "";
+
+		const _token = hash.access_token;
+
+		if (_token) {
+			console.log("my token is", _token);
+			setToken(_token);
+
+			// tell the Spotify class that we have the access token and want Spotify grant it
+			spotify.setAccessToken(_token);
+
+			spotify.getMe().then((user) => console.log("User:", user));
+		}
+	}, []);
+
+	return (
+		<div className="app">
+			{/* Spotify logo */}
+			{/* Login with Spotify button */}
+			{token ? <h1>I am logged in!</h1> : <Login />}
+		</div>
+	);
 }
 
 export default App;
