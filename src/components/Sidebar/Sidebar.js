@@ -10,7 +10,6 @@ import { useStateValue } from "../../context/StateProvider";
 
 const Sidebar = () => {
 	const [{ playlists }] = useStateValue();
-	console.log(playlists);
 
 	return (
 		<div className="sidebar">
